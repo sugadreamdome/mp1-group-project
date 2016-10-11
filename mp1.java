@@ -95,11 +95,12 @@ public class mp1
 		out.println (hang.getBlanks());
 		hang.setBlanks ("???????");
 		out.println (hang.getBlanks());
-		char guess = ' ';
+		String guess = "";
 		
 		out.println ("Enter your guess!");
-		guess = keyIn.findInLine(".").charAt(0);
-		out.println (test2.checkLetter (guess));
+		//guess = keyIn.findInLine(".").charAt(0);
+		guess = keyIn.next();
+		out.println (test2.checkLetter(guess));
 	    out.println (guess);
 	    
 		// NOTE do not add PrettyScreen until the HangWord class is thoroughly tested to:
@@ -142,7 +143,7 @@ class PrettyScreen extends Frame implements KeyListener
 public void paint(Graphics pen)
 {
 	    pen.setFont(new Font("Timesroman",Font.ITALIC,48));
-        pen.drawString("MP1 HangMan  COL Warr",150,60);
+        pen.drawString("MP1 HangMan  Mitchellie Nilluang",150,60);
 
 }		   	
    
@@ -174,6 +175,7 @@ class HangWord
 	private String blanks;
 	private int numGuesses;
 	private int numSameLet;
+	
 	 
 	public HangWord (String w, String blanks)
 	{
@@ -187,32 +189,37 @@ class HangWord
 		// return a String of blanks with the appropriate letters replaced.
 		// checks the blank String to determine if the word to guess is the same.
 		
-	public String checkLetter (char letter)
+	public int checkLetter (String letter)
 	{
 		//loop through wordToGuess
 		//check if letter matches charAt
 		//add to num of same\
 		//replace blank at charAt with letter
 		//not there? add to numWrongGuesses, add to wrong letter
-		int m = 0; 
-		
-		while (m < wordToGuess.length())
+		int numInWord = 0; 
+		for (int c = 0; c < wordToGuess.length(); c++)
 		{
-			if (Character.toString(letter).equals (wordToGuess.substring (m, m+1)))
-			    blanks.replace (' ',letter);
-			  
-			m++;
+			if (letter.equalsIgnoreCase ("" + wordToGuess.charAt(c)))
+			{ 
+			    blanks = blanks.substring(0,c) + wordToGuess.charAt(c) + 
+        	    	   	             blanks.substring(c + 1);
+				out.println (blanks);
+				numInWord ++;
+			}
 		}
+		return numInWord;
+	}
 			
-		return blanks;
-		
-	}	
+
 //    accessors and mutators for the instance variables.
 
 //    checkLetter method (gets a char, changes newWord and returns true or false 
 //          that the letter is in the word.) 
      
-    public void setBlanks (String b) {blanks = b;} //mutator
+    public void setBlanks (String b) 
+    {
+        blanks = b;
+    } //mutator
     
     public String getBlanks () {return blanks;} //accessor
     
