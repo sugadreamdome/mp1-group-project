@@ -1,6 +1,6 @@
 /*
  * Computer Science AP       Period 4
- * Michelle Zhang
+ * Michelle Zhang, Michelle Chu, Jamie Nillas
  *
 	COMPUTER SCIENCE MAJOR PROGRAM 1 --   Hangman
 	    An example of the structure is below the requirements
@@ -86,21 +86,35 @@ import java.awt.Frame;
 
 public class mp1 
 {
-	public static void main (String [] args)
+	public static void main (String [] args) throws IOException
 	{
+		new PrettyScreen ();
+		
 		Scanner keyIn = new Scanner (in);
 		
 		HangWord hang = new HangWord ("test","~~~~~~~~~~~~~~~");
-		HangWord test2 = new HangWord ("Suga", "    ");
+		HangWord test2 = new HangWord ("Suga", "++++");
 		out.println (hang.getBlanks());
 		hang.setBlanks ("???????");
 		out.println (hang.getBlanks());
-		char guess = ' ';
+		String guess = "";
 		
 		out.println ("Enter your guess!");
-		guess = keyIn.findInLine(".").charAt(0);
-		out.println (test2.checkLetter (guess));
+		//guess = keyIn.findInLine(".").charAt(0);
+		guess = keyIn.next();
+		out.println (test2.checkLetter(guess));
 	    out.println (guess);
+	    out.println ("\n" + test2.getNumGuesses());
+	    out.println(test2.getRightGuesses()); 
+	    out.println(test2.getWrongGuesses());
+	    out.println ("Enter your guess!");
+		//guess = keyIn.findInLine(".").charAt(0);
+		guess = keyIn.next();
+		out.println (test2.checkLetter(guess));
+	    out.println (guess);
+	    out.println ("\n" + test2.getNumGuesses());
+	    out.println(test2.getRightGuesses()); 
+	    out.println(test2.getWrongGuesses());
 	    
 		// NOTE do not add PrettyScreen until the HangWord class is thoroughly tested to:
 		// return the word to guess.
@@ -116,7 +130,32 @@ public class mp1
 class PrettyScreen extends Frame implements KeyListener
 {
 	boolean keyPressed = false;
+	boolean gameNotOver = false;
+	
 	char letterGuessed;
+	
+	HangWord suga = new HangWord ("Suga", "++++");
+	
+	Logo nico = new Logo();
+    final int BLACK =      0,  // color constants for setTurtleColor().
+	 	      MAGENTA =    1,
+	 	      BLUE =       2,
+	 	      BRTBLUE =    3,
+	 	      PINK =	      4,
+              GREEN =      5,
+	 	      BRTGREEN =	  6,
+	 	      ORANGE =	  7,
+	 	      RED =        8,
+              GRAY =       9,
+	 	      DARKGRAY =	 10,
+ 	  	      YELLOW =	 11,
+	 	      CYAN =	     12,
+	 	      LIGHTGRAY = 13,
+	 	      BROWN = 	 14,
+	 	      WHITE =	 15,
+	 	      BRTPINK =   16,
+	 	      FUSCHIA =   17,
+			  OTHER =     18;
 	
 	public PrettyScreen()
 	   {
@@ -125,24 +164,53 @@ class PrettyScreen extends Frame implements KeyListener
 //	   	    instantiate a HangWord object
 //	   	    setVisible
 //	   	    message gameLoop
+
+            setSize(1400, 935);
+            addWindowListener(new WindowAdapter()
+            {
+                public void windowClosing(WindowEvent e)
+                {
+                  System.exit(0);
+                }
+            });
+            
+ 	        this.setVisible (true);
+ 	        addKeyListener (this);
+ 	        gameLoop();
+ 	 
 	   }
-//	public void gameLoop()
-//	   {
-//	   	   while word is not guessed
-//	   	       {
-//	   	       	  if(keyPressed)
-//	   	       	      {
-//	   	       	      	  keyPressed = false;
-//	   	       	      	  this.repaint();
-//	   	       	      }	  
-//	   	       	      	  
-//	   	       }
-//	   }
+	   
+	public void gameLoop()
+	   {
+	   	    if (suga.isWordGuessed () == true || suga.isGuessCountMax () == true)
+	   	        gameNotOver = true;
+	   	        
+	   	    while (!gameNotOver)
+	   	       {
+	   	       	  if(keyPressed)
+	   	       	      {
+	   	       	      	  keyPressed = false;
+	   	       	      	  this.repaint();
+	   	       	      }	  
+	   	       	      	  
+	   	       }
+	   }
 
 public void paint(Graphics pen)
 {
-	    pen.setFont(new Font("Timesroman",Font.ITALIC,48));
-        pen.drawString("MP1 HangMan  COL Warr",150,60);
+	Color brightPink = new Color (240, 80, 170);
+	Color lightYellow = new Color (254, 250, 199);
+	pen.setColor (lightYellow);
+	pen.fillRect(0,0, 1400, 935);
+	
+	setTitle("MP1 HangMan Program~!");
+	pen.setColor (Color.gray);
+    pen.setFont(new Font("Timesroman",Font.ITALIC,48));
+    pen.drawString("MP1 HangMan  Mitchellie Nilluang",150,60);
+    
+    pen.drawString (suga.getWordToGuess(), 150, 500);
+    pen.drawString (suga.getBlanks(), 150, 700);
+    pen.drawString ("Guess the word! You have 7 guesses left.", 150, 200);
 
 }		   	
    
@@ -172,8 +240,10 @@ class HangWord
 	
 	private String wordToGuess;
 	private String blanks;
-	private int numGuesses;
-	private int numSameLet;
+    private int numGuesses = 0;
+	private int numRightGuesses;
+	private int numWrongGuesses;
+	
 	 
 	public HangWord (String w, String blanks)
 	{
@@ -187,32 +257,58 @@ class HangWord
 		// return a String of blanks with the appropriate letters replaced.
 		// checks the blank String to determine if the word to guess is the same.
 		
-	public String checkLetter (char letter)
+	public int checkLetter (String letter)
 	{
 		//loop through wordToGuess
 		//check if letter matches charAt
 		//add to num of same\
 		//replace blank at charAt with letter
 		//not there? add to numWrongGuesses, add to wrong letter
-		int m = 0; 
-		
-		while (m < wordToGuess.length())
-		{
-			if (Character.toString(letter).equals (wordToGuess.substring (m, m+1)))
-			    blanks.replace (' ',letter);
-			  
-			m++;
-		}
+		int numInWord = 0; 
+			for (int c = 0; c < wordToGuess.length(); c++)
+			{
+				if (letter.equalsIgnoreCase ("" + wordToGuess.charAt(c)))
+				{ 
+			    	blanks = blanks.substring(0,c) + wordToGuess.charAt(c) + 
+        	   	 	   	             blanks.substring(c + 1);
+					out.println (blanks);
+					numInWord ++;
+					numRightGuesses ++;
+				}
+			}
+				
+		    if (numInWord == 0)
+	    	   numWrongGuesses ++;
+	      
+	    	numGuesses ++;   
+			return numInWord;
+	}
 			
-		return blanks;
-		
-	}	
+    public boolean isWordGuessed ()
+    {
+    	if (wordToGuess.equals (blanks))
+    	    return true;
+    	
+    	return false;
+    }
+    
+    public boolean isGuessCountMax ()
+    {
+    	if (numGuesses >= 7)
+    	   return true;
+    	   
+    	return false;
+    }
+    
 //    accessors and mutators for the instance variables.
 
 //    checkLetter method (gets a char, changes newWord and returns true or false 
 //          that the letter is in the word.) 
      
-    public void setBlanks (String b) {blanks = b;} //mutator
+    public void setBlanks (String b) 
+    {
+        blanks = b;
+    } //mutator
     
     public String getBlanks () {return blanks;} //accessor
     
@@ -222,7 +318,14 @@ class HangWord
 		for (int x = 0; x < wordToGuess.length();x++)
 		    temp += wordToGuess.charAt(x) + " ";
 		return temp;    
-	}	
+	}
+	
+	
+	public int getRightGuesses() { return numRightGuesses; }
+	
+	public int getWrongGuesses() { return numWrongGuesses; }
+	 
+	public int getNumGuesses() { return numGuesses; }
 	
 //    a toString method returns the word and the newWord in a string.
      
