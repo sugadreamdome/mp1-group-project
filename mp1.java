@@ -159,6 +159,13 @@ class PrettyScreen extends Frame implements KeyListener
 	
 	public PrettyScreen()
 	   {
+	   	JOptionPane.showMessageDialog(null,"        Copyright. Nico.\n"+"\n"+
+  									 "  This is a product of Nico.\n"+
+  									 "   Made by Michelle Zhang, Jamie Nillas, and Michelle Chu :)");
+  		JOptionPane.showMessageDialog(null,"     Hello. This is a game of Hangman. Simply type the letter you think\n"+
+  							   			   			   "     is in the word being guessed. Your goal is to guess the whole word\n"+
+										  			   "     but you only get 7 wrong guesses so pick wisely!!!\n" +
+  							   			   			   "                         Good Luck!                        ");
 //	   	    set window size
 //	   	    set close window on
 //	   	    instantiate a HangWord object
