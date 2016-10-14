@@ -335,7 +335,10 @@ class HangWord
 	public int getNumGuesses() { return numGuesses; }
 	
 //    a toString method returns the word and the newWord in a string.
-     
+        public String toString () 
+	{
+		return "The word to guess is " + getWordToGuess() + " and its blanks are " + getBlanks();
+	}
 public static void pause (long r)
 {
     try
